@@ -19,29 +19,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const botName = 'ChatCord Bot';
 
-// Run when client connects
+//! Run when client connects
 io.on('connection', socket => {
+
   socket.on('joinRoom', ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
+      const user = userJoin(socket.id, username, room);
 
-    socket.join(user.room);
+      socket.join(user.room);
 
-    // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+      // Welcome current user
+      socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
 
-    // Broadcast when a user connects
-    socket.broadcast
-      .to(user.room)
-      .emit(
-        'message',
-        formatMessage(botName, `${user.username} has joined the chat`)
-      );
+      // Broadcast when a user connects
+      socket.broadcast
+        .to(user.room)
+        .emit(
+          'message',
+          formatMessage(botName, `${user.username} has joined the chat`)
+        );
 
-    // Send users and room info
-    io.to(user.room).emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    });
+      // Send users and room info
+      io.to(user.room).emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      });
   });
 
   // Listen for chatMessage
@@ -68,7 +69,12 @@ io.on('connection', socket => {
       });
     }
   });
+
 });
+
+
+
+
 
 const PORT = process.env.PORT || 3000;
 
